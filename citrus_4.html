@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Citrus Fruit Production</title>
+  
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+
+  <style type="text/css">
+    body{
+      font-family: arial;
+    }
+    h1{
+      font-size: 22px;
+      margin: 0px;
+    }
+    h2{
+      font-size: 16px;
+      margin: 0px;
+      margin-top: 2px; 
+    }
+    .axis text {
+      font-family: arial;
+      font-size: 12px;
+      font-weight: normal;
+      color: pink;
+    }
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    .bar {
+      fill: #fd8f00;
+    }
+    h1, h2, p{
+      margin-left: 40px;
+    }
+    p{
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Citrus Fruit Production</h1>
+  <h2>From the Top 10 Citrus Producing Countries - 2007</h2>
+
+  <!-- Positioning and Scaling the DOM Elements -->
+  <div id = "viz"></div>
+  <p>source: http://en.wikipedia.org/wiki/Citrus_production</p>
+
+  <script type="text/javascript">
+      
+      var margin = {top: 20, right: 20, bottom: 40, left: 40},
+          width = 480 - margin.left - margin.right,
+          height = 500 - margin.top - margin.bottom;
+
+   
+      var data = [
+          {"amount": 5, "fruit": "grapefruit"},
+          {"amount": 11, "fruit": "lemons and limes"},
+          {"amount": 55, "fruit": "oranges"},
+          {"amount": 23, "fruit": "tangerines, etc."},
+          {"amount": 6, "fruit": "other"}
+      ]
+
+      // D3 has scale methods that works out the math for
+      // the position and scaling of the DOM Elements.
+
+      // D3 scale methods take an input domain which is the data and a output
+      // range whis is related to the height and width of the visualization.
+
+      // D3 scale will map the data values to pixel values within the visualization.
+      var x = d3.scale.ordinal()  
+            .domain(data.map(function(d) { return d.fruit; }))
+            .rangeRoundBands([0, width], .1);
+
+      //On the y axis the height values of the bars produced by the fruit amount.
+      var y = d3.scale.linear()
+            .domain([0, d3.max(data, function(d) { return +d.amount; })])
+            .range([height, 0]);
+
+      var dataviz = d3.select("#viz").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      dataviz.selectAll("rect")
+            .data(data)
+          .enter()
+            .append("rect")
+            .attr("class", "bar")
+            // The width, height, x, and y position are returned by
+            // passing the data to a D3 scale function
+            
+            //  creating the bar x position for each datum 
+            .attr("x", function(d) { return x(d.fruit); })
+            //  creating the bar x width od each bar  
+            .attr("width", x.rangeBand())
+            //  creating the bar y position for each datum. This flips the bar to bottom. 
+            .attr("y", function(d) { return y(+d.amount); })
+            //  creating the bar height 
+            .attr("height", function(d) { return height - y(+d.amount); });
+      
+  </script>
+
+
+</body>
+</html>
