@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Citrus Fruit Production</title>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+  
+  <style type="text/css">
+    body{
+      font-family: arial;
+    }
+    h1{
+      font-size: 22px;
+      margin: 0px;
+    }
+    h2{
+      font-size: 16px;
+      margin: 0px;
+      margin-top: 2px; 
+    }
+    .axis text {
+      font-family: arial;
+      font-size: 12px;
+      font-weight: normal;
+      color: pink;
+    }
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: #000;
+      shape-rendering: crispEdges;
+    }
+    .bar {
+      fill: #fd8f00;
+    }
+    h1, h2, p{
+      margin-left: 40px;
+    }
+    p{
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Citrus Fruit Production</h1>
+  <h2>From the Top 10 Citrus Producing Countries - 2007</h2>
+    <!-- Adding the x axis and y axis to the Bar Graph.  -->
+  <div id = "viz"></div>
+
+  <p>source: http://en.wikipedia.org/wiki/Citrus_production</p>
+  <script type="text/javascript">
+
+     
+      var margin = {top: 20, right: 20, bottom: 40, left: 40},
+          width = 480 - margin.left - margin.right,
+          height = 500 - margin.top - margin.bottom;
+
+     
+    var data = [
+          {"amount": 5, "fruit": "grapefruit"},
+          {"amount": 11, "fruit": "lemons and limes"},
+          {"amount": 55, "fruit": "oranges"},
+          {"amount": 23, "fruit": "tangerines, etc."},
+          {"amount": 6, "fruit": "other"}
+      ]
+
+
+      var x = d3.scale.ordinal()
+            .domain(data.map(function(d) { return d.fruit; }))
+            .rangeRoundBands([0, width], .1);
+
+      
+      var y = d3.scale.linear()
+            .domain([0, d3.max(data, function(d) { return +d.amount; })])
+            .range([height, 0]);
+
+      //  axis() is a d3 method creates a new default axis.
+      // x axis
+      var xAxis = d3.svg.axis()
+            .scale(x); // scale() sets the scale and returns the axis.
+
+      //  y axis 
+      var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .ticks(6); 
+
+      var dataviz = d3.select("#viz").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+      dataviz.selectAll(".bar")
+            .data(data)
+          .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return x(d.fruit); })
+            .attr("width", x.rangeBand())
+            .attr("y", function(d) { return y(+d.amount); })
+            .attr("height", function(d) { return height - y(+d.amount); });
+
+      // building the x axis
+      dataviz.append("g")
+            .attr("class", "axis")
+            .attr("transform", "translate(0," + height + ")")
+        .call(xAxis)
+        // adds the "citrus fruits" label
+            .append("text")
+            .style("text-anchor", "start")
+            .attr("x", 170)
+            .attr("y", 38)
+            .style("font-weight", "bold")
+            .text("citrus fruits");
+
+      // building the y axis
+      dataviz.append("g")
+            .attr("class", "axis")
+        .call(yAxis)
+          // adds the "percentage of total citrus production" label
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 16)
+            .style("text-anchor", "end")
+            .style("font-weight", "bold")
+            .text("percentage of total citrus production");
+            
+  </script>
+
+
+</body>
+</html>
